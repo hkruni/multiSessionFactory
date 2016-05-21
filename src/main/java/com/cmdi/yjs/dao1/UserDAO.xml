@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.yjs.dao1.UserDAO">
+
+	<cache eviction="LRU" type="com.cmdi.yjs.redis.RedisCache"/>
+	
+
+	<!-- 获取用户信息 -->
+    <select id="getUser" resultType="com.cmdi.yjs.po.User">
+    	select * from user u ;
+    </select>
+
+	<select id="getUserByName" resultType="com.cmdi.yjs.po.User" >
+    	select * from user u where u.username=#{username}
+    </select>
+    
+    <insert id="addUser" keyColumn="id" keyProperty="id" useGeneratedKeys="true" parameterType="com.cmdi.yjs.po.User" >
+    	<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      		SELECT LAST_INSERT_ID();
+    	</selectKey>
+    	insert into user(username,password) values(#{username},#{password});
+    </insert>
+
+</mapper>

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<import resource="redis-config.xml"/>
+	<import resource="mybatis-config.xml"/>
+ 	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:jdbc.properties</value>
+				<value>classpath*:redis.properties</value>
+			</list>
+		</property>
+	</bean>
+	  
+    
+    <!-- 切换数据源 -->
+<!-- 	<bean id="dataSourceAdvice" class="com.cmdi.yjs.aop.DataSourceAdvice" /> -->
+<!-- 	<aop:config> -->
+<!-- 		<aop:advisor -->
+<!-- 			pointcut="execution(* com.cmdi.yjs.service..*Service.*(..))" -->
+<!-- 			advice-ref="dataSourceAdvice" /> -->
+<!-- 	</aop:config> -->
+    
+    
+    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource1" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager1" proxy-target-class="true" />
+	
+	
+	<bean id="transactionManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource2" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager2" proxy-target-class="true" />
+
+
+
+  	<!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->  
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+        <property name="defaultEncoding" value="UTF-8"/>  
+        <!-- 指定所上传文件的总大小不能超过200KB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->  
+        <property name="maxUploadSize" value="200000"/>  
+    </bean> 
+    
+    
+    
+    <context:component-scan base-package="com.cmdi.yjs">           
+ 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+    
+
+    
+	<bean id="JsonHttpMessageConverter"
+		class="com.cmdi.yjs.util.JsonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+		<property name="features" >
+		   <list>
+		  <value>WriteNullBooleanAsFalse</value>
+		  <value>QuoteFieldNames</value>  
+                <value>WriteDateUseDateFormat</value> 
+                <value>WriteNullStringAsEmpty</value>  
+		   </list>
+		</property>
+	</bean>
+
+
+</beans>

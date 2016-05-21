@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.yjs.dao2.StudentDAO">
+
+	<cache type="com.cmdi.yjs.redis.RedisCache"/>
+	
+
+
+	<select id="getStudenByID" resultType="com.cmdi.yjs.po.Student">
+    	select * from user u where u.id=#{id}
+    </select>
+    
+
+</mapper>
