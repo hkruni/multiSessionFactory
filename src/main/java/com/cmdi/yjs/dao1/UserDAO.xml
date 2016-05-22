@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cmdi.yjs.dao1.UserDAO">
 
-	<cache eviction="LRU" type="com.cmdi.yjs.redis.RedisCache"/>
+	<!--<cache eviction="LRU" type="com.cmdi.yjs.redis.RedisCache"/>-->
 	
 
 	<!-- 获取用户信息 -->

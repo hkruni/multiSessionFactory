@@ -1,7 +1,5 @@
 package com.cmdi.yjs.controller;
 
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,55 +23,46 @@ import com.cmdi.yjs.service.UserService;
 import com.cmdi.yjs.service2.StudentService;
 import com.cmdi.yjs.util.ObjectByteArrayUtils;
 
-
-
 @Controller
 public class UserController {
 
-	
-	
 	private static Log log = LogFactory.getLog(UserController.class);
-	
-	@Autowired(required=true)
+
+	@Autowired(required = true)
 	private UserService userService;
-	
-	@Autowired(required=true)
+
+	@Autowired(required = true)
 	private StudentService studentService;
-	
-	@Autowired(required=true)
+
+	@Autowired(required = true)
 	private RedisTemplate redisTemplate;
-	
-	
-	
-	@RequestMapping(value="/testPost",method=RequestMethod.POST)
+
+	@RequestMapping(value = "/testPost", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map testPost(@RequestParam("username")String username,@RequestParam("password")String password){
-		
+	public Map testPost(@RequestParam("username") String username,
+			@RequestParam("password") String password) {
+
 		Map map = new HashMap();
 		map.put("name", username);
 		map.put("value", password);
-		
+
 		return map;
-		
+
 	}
-	
-	
-	
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/test",method=RequestMethod.GET)
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map test(){
-		
+	public Map test() {
+
 		redisTemplate.execute(new RedisCallback<Object>() {
 
 			@Override
-			public Object doInRedis(RedisConnection connection)throws DataAccessException {
-				
+			public Object doInRedis(RedisConnection connection)
+					throws DataAccessException {
+
 				connection.select(2);
-				byte []object = connection.get("person:100".getBytes());
+				byte[] object = connection.get("person:100".getBytes());
 				try {
 					Object value = ObjectByteArrayUtils.toObject(object);
 					System.out.println(value);
@@ -82,34 +71,32 @@ public class UserController {
 				}
 				return null;
 			}
-			
+
 		});
-		
+
 		Map map = new HashMap();
 		map.put("name", "tencent");
 		map.put("value", "weixin");
-		
+
 		return map;
-		
+
 	}
-	
-	
-	@RequestMapping(value="/testresult",method=RequestMethod.GET)
+
+	@RequestMapping(value = "/testresult", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map testresult(){
+	public Map testresult() {
 		List<User> userList = userService.getUserByName("hukai");
 		Student student = studentService.getStudentById(1);
-		
-		Map<String,Object> map = new HashMap<String,Object>();
-		
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		map.put("userList", userList);
 		map.put("student", student);
-		
-		return map;	
-		
+
+		return map;
+
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param tid
@@ -117,18 +104,18 @@ public class UserController {
 	 * @param jsoncallback
 	 * @return
 	 */
-	@RequestMapping(value="/getuser",method=RequestMethod.GET)
+	@RequestMapping(value = "/getuser", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map GetItemSiteList(@RequestParam("username")String username){
+	public Map GetItemSiteList(@RequestParam("username") String username) {
 
 		List<User> list = userService.getUser(username);
-		Map<String,Object> map = new HashMap<String,Object>();
-		
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		map.put("totalCount", 1);
 		map.put("root", list);
-		
-		return map;	
-		
+
+		return map;
+
 	}
 
 	/**
@@ -138,32 +125,28 @@ public class UserController {
 	 * @param jsoncallback
 	 * @return
 	 */
-	@RequestMapping(value="/getUserByName",method=RequestMethod.GET)
+	@RequestMapping(value = "/getUserByName", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map getUserByName(@RequestParam("username")String username){
+	public Map getUserByName(@RequestParam("username") String username) {
 
 		List<User> user = userService.getUserByName(username);
-		Map<String,Object> map = new HashMap<String,Object>();
-		
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		map.put("root", user);
-		
-		return map;	
-		
+
+		return map;
+
 	}
-	
-	
-	@RequestMapping(value="/addUser",method=RequestMethod.GET)
+
+	@RequestMapping(value = "/addUser", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map addUser(@RequestParam("username")String username,@RequestParam("password")String password){
+	public Map addUser(@RequestParam("username") String username,
+			@RequestParam("password") String password) {
 
-		userService.addUser(username, password);
-		Map<String,Object> map = new HashMap<String,Object>();
-		
-		map.put("root", "success");
-		
-		return map;	
-		
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		return map;
+
 	}
-	
-}
 
+}

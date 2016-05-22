@@ -14,40 +14,56 @@
 	http://www.springframework.org/schema/aop 
 	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
-	<import resource="redis-config.xml"/>
+	<!--<import resource="redis-config.xml"/>-->
 	<import resource="mybatis-config.xml"/>
  	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath*:jdbc.properties</value>
-				<value>classpath*:redis.properties</value>
+				<!--<value>classpath*:redis.properties</value>-->
 			</list>
 		</property>
 	</bean>
 	  
-    
-    <!-- 切换数据源 -->
-<!-- 	<bean id="dataSourceAdvice" class="com.cmdi.yjs.aop.DataSourceAdvice" /> -->
-<!-- 	<aop:config> -->
-<!-- 		<aop:advisor -->
-<!-- 			pointcut="execution(* com.cmdi.yjs.service..*Service.*(..))" -->
-<!-- 			advice-ref="dataSourceAdvice" /> -->
-<!-- 	</aop:config> -->
-    
-    
-    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <!-- atomikos事务管理器 -->  
+    <bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"  
+        init-method="init" destroy-method="close">  
+        <description>UserTransactionManager</description>  
+        <property name="forceShutdown">  
+            <value>true</value>  
+        </property>  
+    </bean>  
+  
+    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp">  
+        <property name="transactionTimeout" value="300" />  
+    </bean>  
+  
+    <!-- spring 事务管理器 -->  
+    <bean id="springTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">  
+        <property name="transactionManager">  
+            <ref bean="atomikosTransactionManager" />  
+        </property>  
+        <property name="userTransaction">  
+            <ref bean="atomikosUserTransaction" />  
+        </property>  
+		<!-- 必须设置，否则程序出现异常 JtaTransactionManager does not support custom isolation levels by default -->
+        <property name="allowCustomIsolationLevels" value="true"/>
+    </bean> 
+	
+	 <tx:annotation-driven transaction-manager="springTransactionManager" proxy-target-class="true" />
+	
+   <!-- <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource1" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager1" proxy-target-class="true" />
-	
+	<tx:annotation-driven transaction-manager="transactionManager1" proxy-target-class="true" />	
 	
 	<bean id="transactionManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource2" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager2" proxy-target-class="true" />
+	<tx:annotation-driven transaction-manager="transactionManager2" proxy-target-class="true" />-->
 
 
 

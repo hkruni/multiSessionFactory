@@ -11,5 +11,10 @@
     	select * from user u where u.id=#{id}
     </select>
     
-
+	<insert id="addStudent" keyColumn="id" keyProperty="id" useGeneratedKeys="true" parameterType="com.cmdi.yjs.po.User" >
+    	<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      		SELECT LAST_INSERT_ID();
+    	</selectKey>
+    	insert into student(name,age) values(#{name},#{age});
+    </insert>
 </mapper>
